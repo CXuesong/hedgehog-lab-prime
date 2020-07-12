@@ -1,0 +1,13 @@
+{
+    /* For webpack.config.ts */
+    "compilerOptions": {
+        "module": "commonjs",
+        "strict": true,
+        "target": "es2016",
+        "lib": [
+            "ES2016",
+            "ES2017.Object"
+        ],
+        "esModuleInterop": true
+    }
+}

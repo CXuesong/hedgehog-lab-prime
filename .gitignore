@@ -1,2 +1,6 @@
-/.yarn
+/.yarn/
 /.pnp.js
+/.vscode
+
+dist/
+*.scss.d.ts

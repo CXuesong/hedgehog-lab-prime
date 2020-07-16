@@ -26,7 +26,6 @@
     "@types/webpack-dev-server": "^3.11.0",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
-    "@yarnpkg/pnpify": "^2.1.0",
     "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^3.6.0",
     "dart-sass": "^1.25.0",
@@ -55,8 +54,5 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "tslib": "^2.0.0"
-  },
-  "installConfig": {
-    "pnp": true
   }
 }

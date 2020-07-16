@@ -4,7 +4,7 @@ import path from "path";
 import TerserPlugin from "terser-webpack-plugin";
 import webpack from "webpack";
 
-export default function config(env: any, argv: Record<string, string>): webpack.Configuration {
+export default function config(env: unknown, argv: Record<string, string>): webpack.Configuration {
     const isProduction = argv.mode === "production";
     const isRunAsDevServer = process.env.WEBPACK_DEV_SERVER === "true";
     console.info("isRunAsDevServer:", isRunAsDevServer);
@@ -74,14 +74,14 @@ export default function config(env: any, argv: Record<string, string>): webpack.
         optimization: {
             minimize: isProduction,
             minimizer: [
-        new TerserPlugin({
-            cache: true,
-            parallel: true,
-            sourceMap: true, // Must be set to true if using source-maps in production
-            terserOptions: {
-            // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
-            },
-        }) as any, /* TODO revisit */
+                new TerserPlugin({
+                    cache: true,
+                    parallel: true,
+                    sourceMap: true, // Must be set to true if using source-maps in production
+                    terserOptions: {
+                        // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+                    },
+                }) as any, /* TODO revisit */
             ],
         },
         output: {

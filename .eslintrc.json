@@ -59,6 +59,7 @@
                 "indentLogicalExpressions": false
             }
         ],
+        "react/jsx-props-no-spreading": "off",
         "import/extensions": "off",
         "arrow-body-style": "off",
         "max-len": ["error", 180]

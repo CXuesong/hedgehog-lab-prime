@@ -11,6 +11,31 @@ function rooted(relativePath: string): string {
     return path.resolve(__dirname, relativePath);
 }
 
+function pathSegmentRegexp(pathExpression: string) {
+    let result = "";
+    for (const c of pathExpression) {
+        switch (c) {
+            case "/":
+            case "\\":
+                result += "[\\/\\\\]";
+                break;
+            case ".":
+                result += "\\.";
+                break;
+            case "*":
+                result += "[^\\/\\\\]*";
+                break;
+            case "%":
+                result += ".*";
+                break;
+            default:
+                result += c;
+                break;
+        }
+    }
+    return new RegExp(result);
+}
+
 export default function config(env: unknown, argv: Record<string, string>): webpack.Configuration {
     const isProduction = argv.mode === "production";
     const isRunAsDevServer = process.env.WEBPACK_DEV_SERVER === "true";
@@ -33,8 +58,8 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                     loader: "ts-loader",
                     test: /\.tsx?$/,
                     exclude: [
-                        /[/\\]node_modules[/\\]/,
-                        /[/\\]test[/\\]/,
+                        pathSegmentRegexp("/node_modules/"),
+                        pathSegmentRegexp("/test/"),
                     ],
                     options: {
                         transpileOnly: true,
@@ -46,7 +71,8 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                     test: {
                         or: [
                             // hedgehog is using Babel in JS. Wish they are only doing type annotations so tsc can handle it.
-                            /[/\\]hedgehog-lab[/\\]hedgehog-lab[/\\]src[/\\].+\.js$/,
+                            // This does NOT work with tsx though.
+                            pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.js$"),
                         ],
                     },
                     options: {

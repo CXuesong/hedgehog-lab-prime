@@ -13,6 +13,10 @@
         ],
         "esModuleInterop": true,
         "downlevelIteration": true,
-        "importHelpers": true
+        "importHelpers": true,
+        "baseUrl": ".",
+        "paths": {
+            "hedgehog-lab/*":["../node_modules/hedgehog-lab/node_modules/hedgehog-lab/hedgehog-lab/src/*"]
+        }
     }
 }

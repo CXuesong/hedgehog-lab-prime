@@ -1,6 +1,10 @@
 /.yarn/
 /.pnp.js
 /.vscode
+/facades/**/yarn.lock
 
 dist/
+node_modules
+_private
 *.scss.d.ts
+*.log

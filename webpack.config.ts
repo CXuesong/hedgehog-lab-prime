@@ -1,15 +1,22 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-console */
 import CopyPlugin from "copy-webpack-plugin";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import TerserPlugin from "terser-webpack-plugin";
 import webpack from "webpack";
+
+function rooted(relativePath: string): string {
+    return path.resolve(__dirname, relativePath);
+}
 
 export default function config(env: unknown, argv: Record<string, string>): webpack.Configuration {
     const isProduction = argv.mode === "production";
     const isRunAsDevServer = process.env.WEBPACK_DEV_SERVER === "true";
     console.info("isRunAsDevServer:", isRunAsDevServer);
     console.info("isProduction:", isProduction);
-    const outputPath = path.resolve(__dirname, "dist");
+    const outputPath = rooted("dist");
     return {
         mode: isProduction ? "production" : "development",
         entry: "./src/index.tsx",
@@ -32,6 +39,23 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                     options: {
                         transpileOnly: true,
                         experimentalWatchApi: true,
+                    },
+                },
+                {
+                    loader: "ts-loader",
+                    test: {
+                        or: [
+                            // hedgehog is using Babel in JS. Wish they are only doing type annotations so tsc can handle it.
+                            /[/\\]hedgehog-lab[/\\]hedgehog-lab[/\\]src[/\\].+\.js$/,
+                        ],
+                    },
+                    options: {
+                        transpileOnly: true,
+                        experimentalWatchApi: true,
+                        ignoreDiagnostics: [
+                            8009, // The '?' modifier can only be used in TypeScript files.
+                            8010, // Type annotations can only be used in TypeScript files.
+                        ],
                     },
                 },
                 {
@@ -62,13 +86,28 @@ export default function config(env: unknown, argv: Record<string, string>): webp
             ],
         },
         resolve: {
-            extensions: [".tsx", ".ts", ".js"],
+            extensions: [".tsx", ".ts", ".js", ".json"],
+            alias: {
+                path: false,
+                fs: false,
+                "babel-code-frame": false,
+                "hedgehog-lab": "hedgehog-lab/node_modules/hedgehog-lab/hedgehog-lab/src",
+            },
         },
         plugins: [
+            new webpack.ProvidePlugin({
+                process: rooted("src/shims/process.ts"),
+                Buffer: [rooted("src/shims/globals.ts"), "Buffer"],
+            }),
             new CopyPlugin({
                 patterns: [
                     { from: path.join(__dirname, "assets"), to: outputPath },
                 ],
+            }),
+            new ForkTsCheckerWebpackPlugin({
+                typescript: {
+                    configFile: path.join(__dirname, "./src/tsconfig.json"),
+                },
             }),
         ],
         optimization: {

@@ -51,7 +51,16 @@
                 ]
             }
         ],
+        "react/jsx-indent": [
+            "error",
+            4,
+            {
+                "checkAttributes": true,
+                "indentLogicalExpressions": false
+            }
+        ],
         "import/extensions": "off",
-        "arrow-body-style": "off"
+        "arrow-body-style": "off",
+        "max-len": ["error", 180]
     }
 }

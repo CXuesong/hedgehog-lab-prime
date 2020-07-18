@@ -32,11 +32,13 @@
     "eslint": "^7.4.0",
     "eslint-config-airbnb": "latest",
     "eslint-import-resolver-node": "^0.3.4",
+    "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-import-resolver-webpack": "^0.12.2",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-jsx-a11y": "^6.3.0",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "latest",
+    "fork-ts-checker-webpack-plugin": "^5.0.7",
     "mini-css-extract-plugin": "^0.9.0",
     "sass-loader": "^9.0.2",
     "style-loader": "^1.2.1",
@@ -50,7 +52,8 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "hedgehog-transpiler": "^1.0.1",
+    "hedgehog-lab": "file:./facades/hedgehog-lab",
+    "mathjs": "^7.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "tslib": "^2.0.0"

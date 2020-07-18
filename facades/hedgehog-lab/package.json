@@ -1,0 +1,20 @@
+{
+  "name": "hedgehog-lab",
+  "version": "0.0.2",
+  "description": "facade library for hedgehog-lab on GitHub with proper dependency information.",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-flow": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@babel/standalone": "^7.10.5",
+    "gpu.js": "^2.9.4",
+    "hedgehog-lab": "https://github.com/lidangzzz/hedgehog-lab.git#master",
+    "hedgehog-transpiler": "^1.0.1",
+    "mathjs": "^7.1.0",
+    "nerdamer": "^1.1.5"
+  }
+}

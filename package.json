@@ -11,7 +11,8 @@
     "start": "webpack-dev-server",
     "build": "webpack --mode development -c webpack.config.ts",
     "build-prod": "webpack --mode production",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "deploy": "pause && gh-pages -d ./dist"
   },
   "devDependencies": {
     "@teamsupercell/typings-for-css-modules-loader": "^2.2.0",

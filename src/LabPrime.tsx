@@ -1,6 +1,9 @@
 import { basicSetup, EditorState, EditorView } from "@codemirror/next/basic-setup";
+import { javascript, javascriptSyntax } from "@codemirror/next/lang-javascript";
+import { Extension, tagExtension } from "@codemirror/next/state";
+// import Scss from "./LabPrime.scss";
+// import { StreamSyntax } from "@codemirror/next/stream-syntax";
 import { oneDark } from "@codemirror/next/theme-one-dark";
-import { javascript } from "@codemirror/next/lang-javascript";
 import {
     CommandBar, ICommandBarItemProps, PrimaryButton, Text,
 } from "@fluentui/react";
@@ -8,10 +11,8 @@ import OutputItem from "hedgehog-lab/core/output/output-item";
 import { executeOutput } from "hedgehog-lab/core/runtime";
 import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
 import * as React from "react";
-import { Extension, tagExtension } from "@codemirror/next/state";
-import { AppThemeContext } from "./react/context";
 import { Output } from "./hegehog-lab-ts/Output";
-// import Scss from "./LabPrime.scss";
+import { AppThemeContext } from "./react/context";
 
 const editorPreset = `// Let's get started!
 print("Hello, world!");
@@ -30,7 +31,10 @@ export const LabPrimeRoot: React.FC = () => {
             extensions: [
                 basicSetup,
                 javascript(),
-                tagExtension(ThemeExtensionGroup, []),
+                // Known issue: after 1 theme switch and 1 JS autocompletion, CM theme will be reverted.
+                // Let user restart the app after theme-switching to mitigate the issue.
+                tagExtension(ThemeExtensionGroup, theme.config.theme === "dark" ? [oneDark] : []),
+                javascriptSyntax,
             ],
         });
         return new EditorView({ state });

@@ -51,6 +51,7 @@ export const Output: React.FC<IOutputProps> = (props) => {
         </>
     );
 };
+Output.displayName = "Output";
 Output.propTypes = {
     outputItemList: PropTypes.arrayOf(PropTypes.instanceOf(OutputItem).isRequired).isRequired,
 };

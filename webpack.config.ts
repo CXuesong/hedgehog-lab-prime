@@ -39,12 +39,16 @@ function pathSegmentRegexp(pathExpression: string) {
 export default function config(env: unknown, argv: Record<string, string>): webpack.Configuration {
     const isProduction = argv.mode === "production";
     const isRunAsDevServer = process.env.WEBPACK_DEV_SERVER === "true";
-    console.info("isRunAsDevServer:", isRunAsDevServer);
-    console.info("isProduction:", isProduction);
+    if (!argv.profile) {
+        console.info("isRunAsDevServer:", isRunAsDevServer);
+        console.info("isProduction:", isProduction);
+    }
     const outputPath = rooted("dist");
     return {
         mode: isProduction ? "production" : "development",
-        entry: "./src/index.tsx",
+        entry: {
+            index: "./src/index.tsx"
+        },
         devtool: isProduction ? "source-map" : "inline-source-map",
         devServer: {
             contentBase: path.join(__dirname, "assets"),
@@ -70,24 +74,20 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                     loader: "ts-loader",
                     test: {
                         or: [
-                            // hedgehog is using Babel in JS. Wish they are only doing type annotations so tsc can handle it.
-                            // This does NOT work with tsx though.
-                            pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.js$"),
+                            pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.tsx?$"),
                         ],
                     },
                     options: {
                         transpileOnly: true,
                         experimentalWatchApi: true,
                         ignoreDiagnostics: [
-                            8009, // The '?' modifier can only be used in TypeScript files.
-                            8010, // Type annotations can only be used in TypeScript files.
-                        ],
+                            6133, // '...' is declared but its value is never read.
+                        ]
                     },
                 },
                 {
                     test: /\.s[ac]ss$/i,
                     use: [
-                        isRunAsDevServer ? "style-loader" : MiniCssExtractPlugin.loader,
                         {
                             loader: MiniCssExtractPlugin.loader,
                             options: {
@@ -117,7 +117,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 path: false,
                 fs: false,
                 "babel-code-frame": false,
-                "hedgehog-lab": "hedgehog-lab/node_modules/hedgehog-lab/hedgehog-lab/src",
+                "hedgehog-lab": "hedgehog-lab/hedgehog-lab/src",
             },
         },
         plugins: [
@@ -134,24 +134,36 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 typescript: {
                     configFile: path.join(__dirname, "./src/tsconfig.json"),
                 },
+                issue: {
+                    exclude: [
+                        issue => !!issue.file?.match(pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.tsx?$"))
+                    ],
+                }
             }),
+            new MiniCssExtractPlugin({ filename: "index.1.css" })
         ],
         optimization: {
             minimize: isProduction,
             minimizer: [
                 new TerserPlugin({
-                    cache: true,
+                    // cache: true,
                     parallel: true,
                     sourceMap: true, // Must be set to true if using source-maps in production
                     terserOptions: {
                         // https://github.com/webpack-contrib/terser-webpack-plugin#terseroptions
+                        ecma: 2015,
+                        parse: {
+                            ecma: 2018,
+                        },
                     },
+
                 }) as any, /* TODO revisit */
             ],
         },
         output: {
             path: outputPath,
-            filename: "index.js",
+            filename: "[name].js",
+            chunkFilename: '[chunkhash].chunk.js',
         },
     };
 }

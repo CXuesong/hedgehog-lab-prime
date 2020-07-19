@@ -1,0 +1,17 @@
+.primary-spinner-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    :global(.ms-Spinner-circle) {
+        width: calc(min(50vw,50vh));
+        height: calc(min(50vw,50vh));
+        border-width: 10px;
+    }
+
+    :global(.ms-Spinner-label) {
+        font-size: 2rem;
+    }
+}

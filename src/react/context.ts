@@ -1,7 +1,9 @@
 import * as React from "react";
 
+export type AppThemeKey = "light" | "dark";
+
 export interface IAppThemeConfig {
-    theme: "light" | "dark";
+    theme: AppThemeKey;
 }
 export interface IAppThemeContextValue {
     config: IAppThemeConfig;

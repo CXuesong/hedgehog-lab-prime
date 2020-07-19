@@ -1,8 +1,8 @@
-import { Customizer } from "@fluentui/react";
+import { Customizer, Spinner, Stack } from "@fluentui/react";
 import * as React from "react";
 import { AppThemeContext, IAppThemeConfig, IAppThemeContextValue } from "./react/context";
 import { fluentDarkTheme } from "./react/fluent-ui";
-import { LabPrimeRoot } from "./LabPrime";
+import Scss from "./App.scss";
 
 function parseThemeConfig(serialized: string): IAppThemeConfig | undefined {
     if (!serialized) return undefined;
@@ -12,6 +12,16 @@ function parseThemeConfig(serialized: string): IAppThemeConfig | undefined {
 }
 
 const LOCAL_STORAGE_THEME_KEY = "hedgehog-prime-theme";
+
+const LazyLabPrimeRoot = React.lazy(() => import("./LabPrime").then((m) => ({ default: m.LabPrimeRoot })));
+
+export const LoadingScreen: React.FC = () => {
+    return (
+        <Stack className={Scss.primarySpinnerContainer} verticalAlign="center">
+            <Spinner label="Loading Hedgehog Prime…" />
+        </Stack>
+    );
+};
 
 export const App: React.FC = () => {
     const [themeConfig, setThemeConfig] = React.useState<IAppThemeConfig>(() => {
@@ -33,7 +43,9 @@ export const App: React.FC = () => {
     return (
         <Customizer {...themeConfig.theme === "dark" ? fluentDarkTheme : {}}>
             <AppThemeContext.Provider value={appThemeContextValue}>
-                <LabPrimeRoot />
+                <React.Suspense fallback={<LoadingScreen />}>
+                    <LazyLabPrimeRoot />
+                </React.Suspense>
             </AppThemeContext.Provider>
         </Customizer>
     );

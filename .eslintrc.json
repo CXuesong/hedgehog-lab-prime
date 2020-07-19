@@ -62,6 +62,22 @@
         "react/jsx-props-no-spreading": "off",
         "import/extensions": "off",
         "arrow-body-style": "off",
-        "max-len": ["error", 180]
+        "max-len": [
+            "error",
+            180
+        ],
+        "no-underscore-dangle": [
+            "error",
+            {
+                "allow": [
+                    "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"
+                ],
+                "allowAfterThis": true,
+                "allowAfterSuper": true,
+                "enforceInMethodNames": true,
+                "allowAfterThisConstructor": false
+            }
+        ],
+        "react/destructuring-assignment": "off"
     }
 }

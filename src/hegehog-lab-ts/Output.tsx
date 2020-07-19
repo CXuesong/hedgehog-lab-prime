@@ -1,19 +1,21 @@
+import { List } from "@fluentui/react";
 import OutputItem from "hedgehog-lab/core/output/output-item";
+import PropTypes from "prop-types";
 import * as React from "react";
 import Markdown from "react-markdown";
 import MathJax from "react-mathjax";
 import Plot from "react-plotly.js";
-import PropTypes from "prop-types";
 
 export interface IOutputProps {
     outputItemList: OutputItem[]
 }
 
 export const Output: React.FC<IOutputProps> = (props) => {
-    const { outputItemList } = props;
-    const items = outputItemList.map((item) => {
+    const onRenderItem = React.useCallback((item?: OutputItem, index?: number) => {
+        if (!item || index == null) return null;
         if (item.isDraw()) {
-            return typeof item.data === "object" && (<Plot data={item.data} layout={item.layout} />);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return typeof item.data === "object" && (<Plot data={item.data} layout={item.layout as any} />);
         }
         if (item.isTex()) {
             return typeof item.text === "string" && (
@@ -40,16 +42,8 @@ export const Output: React.FC<IOutputProps> = (props) => {
             return typeof item.text === "string" && <pre>{item.text}</pre>;
         }
         return undefined;
-    });
-
-    return (
-        <>
-            {items.map((item, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <React.Fragment key={index}>{item}</React.Fragment>
-            ))}
-        </>
-    );
+    }, []);
+    return (<List<OutputItem> items={props.outputItemList} onRenderCell={onRenderItem} />);
 };
 Output.displayName = "Output";
 Output.propTypes = {

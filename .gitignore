@@ -6,5 +6,7 @@
 dist/
 node_modules
 _private
+*._private
+*._private.*
 *.scss.d.ts
 *.log

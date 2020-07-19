@@ -1,16 +1,11 @@
-import { basicSetup, EditorState, EditorView } from "@codemirror/next/basic-setup";
-import { javascript, javascriptSyntax } from "@codemirror/next/lang-javascript";
-import { Extension, tagExtension } from "@codemirror/next/state";
-// import Scss from "./LabPrime.scss";
-// import { StreamSyntax } from "@codemirror/next/stream-syntax";
-import { oneDark } from "@codemirror/next/theme-one-dark";
 import {
-    CommandBar, ICommandBarItemProps, PrimaryButton, Text,
+    CommandBar, ICommandBarItemProps, PrimaryButton, Spinner, Text,
 } from "@fluentui/react";
 import OutputItem from "hedgehog-lab/core/output/output-item";
 import { executeOutput } from "hedgehog-lab/core/runtime";
 import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
 import * as React from "react";
+import type { CodeEditor } from "./CodeEditor";
 import { Output } from "./hegehog-lab-ts/Output";
 import { AppThemeContext } from "./react/context";
 
@@ -21,41 +16,15 @@ const x = mat([1,2,3,4]);
 print(x + x)
 `;
 
-const ThemeExtensionGroup = Symbol("ThemeExtensionGroup");
+const LazyCodeEditor = React.lazy(() => import("./CodeEditor").then((m) => ({ default: m.CodeEditor })));
 
 export const LabPrimeRoot: React.FC = () => {
     const theme = React.useContext(AppThemeContext);
-    const editorView = React.useMemo(() => {
-        const state = EditorState.create({
-            doc: editorPreset,
-            extensions: [
-                basicSetup,
-                javascript(),
-                // Known issue: after 1 theme switch and 1 JS autocompletion, CM theme will be reverted.
-                // Let user restart the app after theme-switching to mitigate the issue.
-                tagExtension(ThemeExtensionGroup, theme.config.theme === "dark" ? [oneDark] : []),
-                javascriptSyntax,
-            ],
-        });
-        return new EditorView({ state });
-    }, []);
+    const codeEditorRef = React.useRef<CodeEditor>(null);
     const [outputList, setOutputList] = React.useState<OutputItem[] | undefined>();
-    React.useEffect(() => {
-        const themeExtensions: Extension[] = [];
-        if (theme.config.theme === "dark") {
-            themeExtensions.push(oneDark);
-        }
-        editorView.dispatch({ reconfigure: { [ThemeExtensionGroup]: themeExtensions } });
-    }, [theme.config.theme]);
-    function onEditorContainerChanged(domContainer: HTMLElement | null): void {
-        if (domContainer) {
-            domContainer.appendChild(editorView.dom);
-        } else {
-            editorView.dom.remove();
-        }
-    }
     function onExecuteButtonClick() {
-        const code = transpilerCore(editorView.state.sliceDoc());
+        if (!codeEditorRef.current) return;
+        const code = transpilerCore(codeEditorRef.current.editorState.sliceDoc());
         const result = executeOutput(code);
         setOutputList(result);
     }
@@ -88,7 +57,9 @@ export const LabPrimeRoot: React.FC = () => {
         <div>
             <Text variant="xxLarge">Hedgehog Lab Prime</Text>
             <CommandBar items={commandBarItems} />
-            <div ref={onEditorContainerChanged} />
+            <React.Suspense fallback={<Spinner label="Loading editor…" />}>
+                <LazyCodeEditor ref={codeEditorRef} initialContent={editorPreset} />
+            </React.Suspense>
             <PrimaryButton onClick={onExecuteButtonClick}>Execute</PrimaryButton>
             {outputList && <Output outputItemList={outputList} />}
         </div>

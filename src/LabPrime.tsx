@@ -32,12 +32,17 @@ export const LabPrimeRoot: React.FC = () => {
     const lastEditorContent = React.useMemo(() => localStorage.getItem(LOCAL_STORAGE_LAST_EDITOR_CONTENT_KEY) || editorPreset, []);
     const editorStartingEdgeRef = React.useRef<HTMLDivElement>(null);
     const outputStartingEdgeRef = React.useRef<HTMLDivElement>(null);
-    function onExecuteButtonClick() {
+    function saveEditorContent(): void {
         if (!codeEditorRef.current) return;
         const content = codeEditorRef.current.editorState.sliceDoc();
         if (content.length < 1024 * 4) {
             localStorage.setItem(LOCAL_STORAGE_LAST_EDITOR_CONTENT_KEY, content);
         }
+    }
+    function onExecuteButtonClick() {
+        if (!codeEditorRef.current) return;
+        saveEditorContent();
+        const content = codeEditorRef.current.editorState.sliceDoc();
         try {
             const transpiled = transpilerCore(content);
             const result = executeOutput(transpiled);
@@ -50,6 +55,13 @@ export const LabPrimeRoot: React.FC = () => {
             outputStartingEdgeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 50);
     }
+    // Save editor content as draft when unmounting the component.
+    React.useEffect(() => {
+        window.addEventListener("blur", saveEditorContent);
+        return () => {
+            saveEditorContent();
+        };
+    }, []);
     const commandBarItems = React.useMemo<ICommandBarItemProps[]>(() => [
         {
             key: "Run",

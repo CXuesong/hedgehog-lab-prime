@@ -10,4 +10,9 @@ initializeIcons();
 
 // Mount root component.
 const domRoot = document.querySelector("#react-root");
-ReactDOM.render(<App />, domRoot);
+if (domRoot) {
+    ReactDOM.render(<App />, domRoot);
+    window.addEventListener("beforeunload", () => {
+        ReactDOM.unmountComponentAtNode(domRoot);
+    });
+}

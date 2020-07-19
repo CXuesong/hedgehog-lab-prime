@@ -5,8 +5,8 @@ import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
 import { tutorials } from "hedgehog-lab/tutorials";
 import * as React from "react";
 import type { CodeEditor } from "./CodeEditor";
-import { JSErrorView } from "./Components/JSErrorView";
-import { OutputList } from "./Components/Output";
+import { JSErrorView } from "./components/JSErrorView";
+import { OutputList } from "./components/Output";
 import Scss from "./LabPrime.scss";
 import { AppThemeContext } from "./react/context";
 

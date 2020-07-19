@@ -1,0 +1,39 @@
+.list-item-container {
+    background-color: #fefefe;
+    border: 1px solid #999999;
+    margin-top: 1em;
+
+    .item-index {
+        background-color: #dddddd;
+        font-size: 0.85em;
+
+        min-width: 5em;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        padding-right: 0.5em;
+        text-align: right;
+    }
+
+    .item-content {
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+    }
+
+    pre {
+        margin: 0 0;
+    }
+}
+
+:global(.app-theme-dark) {
+    .list-item-container {
+        background-color: #333333;
+        border: 1px solid #666666;
+        margin-top: 1em;
+
+        .item-index {
+            background-color: #666666;
+        }
+    }
+}

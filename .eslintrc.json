@@ -78,6 +78,7 @@
                 "allowAfterThisConstructor": false
             }
         ],
-        "react/destructuring-assignment": "off"
+        "react/destructuring-assignment": "off",
+        "react/jsx-one-expression-per-line": "off"
     }
 }

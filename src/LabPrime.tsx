@@ -6,7 +6,7 @@ import { executeOutput } from "hedgehog-lab/core/runtime";
 import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
 import * as React from "react";
 import type { CodeEditor } from "./CodeEditor";
-import { Output } from "./hegehog-lab-ts/Output";
+import { OutputList } from "./Components/Output";
 import { AppThemeContext } from "./react/context";
 
 const editorPreset = `// Let's get started!
@@ -61,7 +61,7 @@ export const LabPrimeRoot: React.FC = () => {
                 <LazyCodeEditor ref={codeEditorRef} initialContent={editorPreset} />
             </React.Suspense>
             <PrimaryButton onClick={onExecuteButtonClick}>Execute</PrimaryButton>
-            {outputList && <Output outputItemList={outputList} />}
+            <OutputList items={outputList || []} />
         </div>
     );
 };

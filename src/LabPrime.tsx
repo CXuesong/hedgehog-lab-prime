@@ -1,6 +1,4 @@
-import {
-    CommandBar, ContextualMenuItemType, ICommandBarItemProps, PrimaryButton, Spinner, Text, VerticalDivider,
-} from "@fluentui/react";
+import { CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, Spinner, Stack, Text, TooltipHost, VerticalDivider } from "@fluentui/react";
 import OutputItem from "hedgehog-lab/core/output/output-item";
 import { executeOutput } from "hedgehog-lab/core/runtime";
 import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
@@ -127,11 +125,56 @@ export const LabPrimeRoot: React.FC = () => {
                 ],
             },
         },
+        {
+            key: "D2",
+            itemType: ContextualMenuItemType.Divider,
+            onRender: () => <VerticalDivider />,
+        },
+        {
+            key: "About",
+            text: "About",
+            iconProps: { iconName: "ContactInfo" },
+            subMenuProps: {
+                items: [
+                    {
+                        key: "HedgehogPrimeGitHub",
+                        text: "Star HedgeHog Lab Prime on GitHub",
+                        secondaryText: "CXuesong/hedgehog-lab-prime",
+                        href: "https://github.com/CXuesong/hedgehog-lab-prime",
+                        target: "_blank",
+                    },
+                    {
+                        key: "HedgehogGitHub",
+                        text: "Star HedgeHog Lab on GitHub",
+                        secondaryText: "lidangzzz/hedgehog-lab",
+                        href: "https://github.com/lidangzzz/hedgehog-lab",
+                        target: "_blank",
+                    },
+                    {
+                        key: "D1",
+                        itemType: ContextualMenuItemType.Divider,
+                    },
+                    {
+                        key: "GoHedgehog",
+                        text: "Switch back to Hedgehog Lab",
+                        secondaryText: "lidangzzz/hedgehog-lab",
+                        href: "https://hedgehog-lab.github.io/",
+                        target: "_self",
+                    },
+                ],
+            },
+        },
     ], [theme]);
     return (
         <div>
             <div ref={editorStartingEdgeRef} />
-            <Text variant="xxLarge">Hedgehog Lab Prime</Text>
+            <Stack horizontal wrap tokens={{ padding: 8, childrenGap: 16 }} verticalAlign="baseline">
+                <TooltipHost content="the alternative UI for hedgehog-lab!">
+                    <Text variant="xLarge">Hedgehog Lab <Text>Prime</Text></Text>
+                </TooltipHost>
+                <Link href="https://github.com/CXuesong/hedgehog-lab-prime" target="_blank">Star it on GitHub</Link>
+                <Link href="https://hedgehog-lab.github.io/" target="_self">Go back to Hedgehog Lab</Link>
+            </Stack>
             <CommandBar className={Scss.toolbar} items={commandBarItems} />
             <React.Suspense fallback={<Spinner label="Loading editor…" />}>
                 <LazyCodeEditor ref={codeEditorRef} initialContent={lastEditorContent} />

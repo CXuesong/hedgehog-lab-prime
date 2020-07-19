@@ -62,6 +62,18 @@ export class CodeEditor extends React.PureComponent<ICodeEditorProps> {
         return this.editorView ? this.editorView.state : this._lastEditorState;
     }
 
+    public setContent(content: string): void {
+        if (!this.editorView) throw new Error("Not implemented.");
+        const { editorView } = this;
+        editorView.dispatch(editorView.state.update({
+            changes: {
+                from: 0,
+                to: editorView.state.doc.length,
+                insert: content,
+            },
+        }));
+    }
+
     private _onEditorContainerChanged = (domContainer: HTMLElement | null) => {
         if (this.editorView) {
             if (domContainer) {

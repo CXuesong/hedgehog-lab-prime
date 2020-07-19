@@ -1,0 +1,28 @@
+.toolbar {
+    position: sticky;
+    z-index: 10;
+    top: 0px;
+}
+
+.output-container {
+    margin: 0.5em;
+}
+
+.output-error-root {
+    font-family: Monaco, Consolas, 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    background-color: #ffeeee;
+    border: 1px solid #ff9999;
+    padding: 0.5em;
+}
+
+.output-error-header {
+    font-size: 1.1em;
+}
+
+:global(.app-theme-dark) {
+    .output-error-root {
+        background-color: #330000;
+        border: 1px solid #990000;
+    }
+}

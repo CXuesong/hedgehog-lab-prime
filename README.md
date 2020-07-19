@@ -2,9 +2,9 @@
 >
 > — Jayfeather, *Shattered Sky*
 
-# hedgehog-lab-prime
+# Hedgehog Lab Prime
 
 An attempt to enter [hedgehog-lab (abbr. HedgeLab)](https://github.com/lidangzzz/hedgehog-lab) with an alternative UI experience.
 
-Work In Progress.
+Live site on: https://cxuesong.github.io/hedgehog-lab-prime/
 

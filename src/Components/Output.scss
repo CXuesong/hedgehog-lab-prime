@@ -2,12 +2,13 @@
     background-color: #fefefe;
     border: 1px solid #999999;
     margin-top: 1em;
+    overflow-x: auto;
 
     .item-index {
         background-color: #dddddd;
-        font-size: 0.85em;
+        font-size: 0.9em;
 
-        min-width: 5em;
+        min-width: 4em;
         padding-top: 0.5em;
         padding-bottom: 0.5em;
         padding-right: 0.5em;

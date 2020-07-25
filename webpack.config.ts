@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CopyPlugin from "copy-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
@@ -74,7 +75,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                     loader: "ts-loader",
                     test: {
                         or: [
-                            pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.tsx?$"),
+                            pathSegmentRegexp("/hedgehog-lab/packages/%.tsx?$"),
                         ],
                     },
                     options: {
@@ -117,10 +118,11 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 path: false,
                 fs: false,
                 "babel-code-frame": false,
-                "hedgehog-lab": "hedgehog-lab/hedgehog-lab/src",
+                "hedgehog-lab": "hedgehog-lab/packages",
             },
         },
         plugins: [
+            new CleanWebpackPlugin(),
             new webpack.ProvidePlugin({
                 process: rooted("src/shims/process.ts"),
                 Buffer: [rooted("src/shims/globals.ts"), "Buffer"],
@@ -136,7 +138,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 },
                 issue: {
                     exclude: [
-                        issue => !!issue.file?.match(pathSegmentRegexp("/hedgehog-lab/hedgehog-lab/src/%.tsx?$"))
+                        issue => !!issue.file?.match(pathSegmentRegexp("node_modules/hedgehog-lab/packages/%.tsx?$"))
                     ],
                 }
             }),
@@ -163,7 +165,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
         output: {
             path: outputPath,
             filename: "[name].js",
-            chunkFilename: '[chunkhash].chunk.js',
+            chunkFilename: '[id].[chunkhash].chunk.js',
         },
     };
 }

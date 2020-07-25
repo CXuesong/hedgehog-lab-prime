@@ -5,3 +5,10 @@ declare module "*.scss" {
     const classNames: Record<string, string>;
     export default classNames;
 }
+
+declare module "worker-loader!*" {
+    class WebpackWorker extends Worker {
+    }
+
+    export default WebpackWorker;
+}

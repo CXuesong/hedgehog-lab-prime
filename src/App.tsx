@@ -18,7 +18,7 @@ const LazyLabPrimeRoot = React.lazy(() => import("./LabPrime").then((m) => ({ de
 export const LoadingScreen: React.FC = () => {
     return (
         <Stack className={Scss.primarySpinnerContainer} verticalAlign="center">
-            <Spinner label="Loading Hedgehog Prime…" />
+            <Spinner label="Loading Hedgehog Lab Prime…" />
         </Stack>
     );
 };

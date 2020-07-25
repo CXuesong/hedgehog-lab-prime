@@ -18,7 +18,7 @@
         "removeComments": false,
         "baseUrl": ".",
         "paths": {
-            "hedgehog-lab/*":["../node_modules/hedgehog-lab/hedgehog-lab/src/*"]
+            "hedgehog-lab/*":["../node_modules/hedgehog-lab/packages/*"]
         }
     }
 }

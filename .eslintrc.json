@@ -40,7 +40,10 @@
         "import/prefer-default-export": "off",
         "indent": [
             "warn",
-            4
+            4,
+            {
+                "SwitchCase": 1
+            }
         ],
         "react/jsx-filename-extension": [
             "warn",

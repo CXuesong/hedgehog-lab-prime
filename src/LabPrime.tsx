@@ -1,8 +1,8 @@
 import { CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, Spinner, Stack, Text, TooltipHost, VerticalDivider } from "@fluentui/react";
-import OutputItem from "hedgehog-lab/core/output/output-item";
+import { OutputItem } from "hedgehog-lab/core/output/output-item";
 import { executeOutput } from "hedgehog-lab/core/runtime";
 import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
-import { tutorials } from "hedgehog-lab/tutorials";
+import { tutorials } from "hedgehog-lab/lab/tutorials";
 import * as React from "react";
 import type { CodeEditor } from "./CodeEditor";
 import { JSErrorView } from "./components/JSErrorView";

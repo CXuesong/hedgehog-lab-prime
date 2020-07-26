@@ -118,7 +118,8 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 path: false,
                 fs: false,
                 "babel-code-frame": false,
-                "hedgehog-lab": "hedgehog-lab/packages",
+                "hedgehog-lab/core": "hedgehog-lab/packages/hedgehog-core/src/",
+                "hedgehog-lab/lab": "hedgehog-lab/packages/hedgehog-lab/src/",
             },
         },
         plugins: [

@@ -1,11 +1,16 @@
 import { List, Stack, StackItem } from "@fluentui/react";
-import OutputItem from "hedgehog-lab/core/output/output-item";
+import { OutputItem } from "hedgehog-lab/core/output/output-item";
 import PropTypes from "prop-types";
 import * as React from "react";
 import Markdown from "react-markdown";
 import MathJax from "react-mathjax";
 import Plot from "react-plotly.js";
 import Scss from "./Output.scss";
+
+const outputItemValidator = PropTypes.shape({
+    itemType: PropTypes.string,
+    text: PropTypes.string,
+}) as PropTypes.Requireable<OutputItem>;
 
 export interface IOutputItemViewProps {
     item: OutputItem;
@@ -19,39 +24,37 @@ export const OutputItemView: React.FC<IOutputItemViewProps> = React.memo<IOutput
     function buildEmptyDataPlaceholder(): React.ReactElement {
         return (<div>Empty data.</div>);
     }
-    if (item.isDraw()) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (typeof item.data === "object" && <Plot data={item.data} layout={item.layout as any} />) || buildInvalidDataPlaceholder();
+    switch (item.itemType) {
+        case "DRAWING":
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return (typeof item.data === "object" && <Plot data={item.data} layout={item.layout as any} />) || buildInvalidDataPlaceholder();
+        case "TEX":
+            return (typeof item.text === "string" && (
+                <MathJax.Provider>
+                    <div>
+                        <MathJax.Node inline formula={item.text} />
+                    </div>
+                </MathJax.Provider>
+            )) || buildInvalidDataPlaceholder();
+        case "FORMULA":
+            return (typeof item.text === "string" && (
+                <MathJax.Provider>
+                    <div>
+                        <MathJax.Node formula={item.text} />
+                    </div>
+                </MathJax.Provider>
+            )) || buildInvalidDataPlaceholder();
+        case "MARKDOWN":
+            return (typeof item.text === "string" && <Markdown source={item.text} />) || buildEmptyDataPlaceholder();
+        case "TEXT":
+            return (typeof item.text === "string" && <pre>{item.text}</pre>) || buildEmptyDataPlaceholder();
+        default:
+            return (<div>[Entry cannot be rendered: [{(item as OutputItem).itemType}] {String(item)}]</div>);
     }
-    if (item.isTex()) {
-        return (typeof item.text === "string" && (
-            <MathJax.Provider>
-                <div>
-                    <MathJax.Node inline formula={item.text} />
-                </div>
-            </MathJax.Provider>
-        )) || buildInvalidDataPlaceholder();
-    }
-    if (item.isFormulaTex()) {
-        return (typeof item.text === "string" && (
-            <MathJax.Provider>
-                <div>
-                    <MathJax.Node formula={item.text} />
-                </div>
-            </MathJax.Provider>
-        )) || buildInvalidDataPlaceholder();
-    }
-    if (item.isMarkdown()) {
-        return (typeof item.text === "string" && <Markdown source={item.text} />) || buildEmptyDataPlaceholder();
-    }
-    if (item.isPrint()) {
-        return (typeof item.text === "string" && <pre>{item.text}</pre>) || buildEmptyDataPlaceholder();
-    }
-    return (<div>[Entry cannot be rendered: {String(item)}]</div>);
 });
 OutputItemView.displayName = "OutputItemView";
 OutputItemView.propTypes = {
-    item: PropTypes.instanceOf(OutputItem).isRequired,
+    item: outputItemValidator.isRequired,
 };
 
 export interface IOutputListItemContainerProps {
@@ -71,7 +74,7 @@ export const OutputListItemContainer: React.FC<IOutputListItemContainerProps> = 
 OutputListItemContainer.displayName = "OutputListItemContainer";
 OutputListItemContainer.propTypes = {
     index: PropTypes.number.isRequired,
-    item: PropTypes.instanceOf(OutputItem).isRequired,
+    item: outputItemValidator.isRequired,
 };
 
 export interface IOutputListProps {
@@ -87,5 +90,5 @@ export const OutputList: React.FC<IOutputListProps> = (props) => {
 };
 OutputList.displayName = "OutputList";
 OutputList.propTypes = {
-    items: PropTypes.arrayOf(PropTypes.instanceOf(OutputItem).isRequired).isRequired,
+    items: PropTypes.arrayOf(outputItemValidator.isRequired).isRequired,
 };

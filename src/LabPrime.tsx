@@ -250,7 +250,7 @@ export const LabPrimeRoot: React.FC = () => {
             <div ref={editorStartingEdgeRef} />
             <Stack horizontal wrap tokens={{ padding: 8, childrenGap: 16 }} verticalAlign="baseline">
                 <TooltipHost content="the alternative UI for hedgehog-lab!">
-                    <Text variant="xLarge">Hedgehog Lab <Text>Prime</Text></Text>
+                    <Text as="h1" variant="xLarge">Hedgehog Lab <Text>Prime</Text></Text>
                 </TooltipHost>
                 <Link href="https://github.com/CXuesong/hedgehog-lab-prime" target="_blank">Star it on GitHub</Link>
                 <Link href="https://hedgehog-lab.github.io/" target="_self">Go back to Hedgehog Lab</Link>

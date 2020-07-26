@@ -15,4 +15,5 @@ if (domRoot) {
     window.addEventListener("beforeunload", () => {
         ReactDOM.unmountComponentAtNode(domRoot);
     });
+    document.title = "Hedgehog Lab Prime - Yet another Hedgehog Lab UI";
 }

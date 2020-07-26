@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
@@ -48,7 +48,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
     return {
         mode: isProduction ? "production" : "development",
         entry: {
-            index: "./src/index.tsx"
+            index: "./src/index.tsx",
         },
         devtool: isProduction ? "source-map" : "inline-source-map",
         devServer: {
@@ -83,8 +83,23 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                         experimentalWatchApi: true,
                         ignoreDiagnostics: [
                             6133, // '...' is declared but its value is never read.
-                        ]
+                        ],
                     },
+                },
+                {
+                    test: /\.worker\.(js|ts)$/,
+                    use: [
+                        {
+                            loader: "worker-loader",
+                        },
+                        {
+                            loader: "ts-loader",
+                            options: {
+                                transpileOnly: true,
+                                experimentalWatchApi: true,
+                            }
+                        },
+                    ],
                 },
                 {
                     test: /\.s[ac]ss$/i,
@@ -139,11 +154,11 @@ export default function config(env: unknown, argv: Record<string, string>): webp
                 },
                 issue: {
                     exclude: [
-                        issue => !!issue.file?.match(pathSegmentRegexp("node_modules/hedgehog-lab/packages/%.tsx?$"))
+                        (issue) => !!issue.file?.match(pathSegmentRegexp("node_modules/hedgehog-lab/packages/%.tsx?$")),
                     ],
-                }
+                },
             }),
-            new MiniCssExtractPlugin({ filename: "index.1.css" })
+            new MiniCssExtractPlugin({ filename: "index.1.css" }),
         ],
         optimization: {
             minimize: isProduction,
@@ -166,7 +181,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
         output: {
             path: outputPath,
             filename: "[name].js",
-            chunkFilename: '[id].[chunkhash].chunk.js',
+            chunkFilename: "[id].[chunkhash].chunk.js",
         },
     };
 }

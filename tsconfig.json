@@ -2,6 +2,7 @@
     /* For webpack.config.ts */
     "compilerOptions": {
         "module": "commonjs",
+        "moduleResolution": "Node",
         "strict": true,
         "target": "es2016",
         "lib": [

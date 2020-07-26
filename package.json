@@ -61,7 +61,7 @@
     "webpack": "^5.0.0-beta",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
-    "worker-loader": "^2.0.0"
+    "worker-loader": "https://github.com/webpack-contrib/worker-loader.git#master"
   },
   "dependencies": {
     "@codemirror/next": "^0.8.0",

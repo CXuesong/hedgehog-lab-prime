@@ -1,9 +1,13 @@
-import { CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, Spinner, Stack, Text, TooltipHost, VerticalDivider } from "@fluentui/react";
+import {
+    CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, Spinner, Stack, Text, TooltipHost, VerticalDivider,
+} from "@fluentui/react";
+import * as Comlink from "comlink";
 import { OutputItem } from "hedgehog-lab/core/output/output-item";
 import { executeOutput } from "hedgehog-lab/core/runtime";
-import transpilerCore from "hedgehog-lab/core/transpiler/transpiler-core";
 import { tutorials } from "hedgehog-lab/lab/tutorials";
 import * as React from "react";
+import CompilerWorker from "./workers/compiler.worker";
+import { CompilerInstance } from "./workers/compilerInstance";
 import type { CodeEditor } from "./CodeEditor";
 import { JSErrorView } from "./components/JSErrorView";
 import { OutputList } from "./components/Output";
@@ -37,17 +41,25 @@ export const LabPrimeRoot: React.FC = () => {
             localStorage.setItem(LOCAL_STORAGE_LAST_EDITOR_CONTENT_KEY, content);
         }
     }
-    function onExecuteButtonClick() {
+    async function onExecuteButtonClick() {
         if (!codeEditorRef.current) return;
         saveEditorContent();
         const content = codeEditorRef.current.editorState.sliceDoc();
+        let worker: CompilerWorker | undefined;
+        let compiler: Comlink.Remote<CompilerInstance> | undefined;
         try {
-            const transpiled = transpilerCore(content);
-            const result = executeOutput(transpiled);
+            worker = new CompilerWorker();
+            worker.postMessage("test");
+            compiler = Comlink.wrap<CompilerInstance>(worker);
+            const compiled = await compiler.compile(content);
+            const result = executeOutput(compiled.compiledCode);
             setOutputList(result);
             setExecutionError(undefined);
         } catch (err) {
             setExecutionError(err);
+        } finally {
+            compiler?.[Comlink.releaseProxy]();
+            worker?.terminate();
         }
         window.setTimeout(() => {
             outputStartingEdgeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -65,7 +77,7 @@ export const LabPrimeRoot: React.FC = () => {
             key: "Run",
             text: "Compile & Run",
             iconProps: { iconName: "Play" },
-            onClick: onExecuteButtonClick,
+            onClick: () => { onExecuteButtonClick(); },
         },
         {
             key: "D1",

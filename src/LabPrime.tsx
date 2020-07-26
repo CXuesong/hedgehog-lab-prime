@@ -1,18 +1,20 @@
 import {
-    CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, Spinner, Stack, Text, TooltipHost, VerticalDivider,
+    CommandBar, ContextualMenuItemType, ICommandBarItemProps, Link, PrimaryButton, ProgressIndicator, Spinner, Stack, Text, TooltipHost, VerticalDivider,
 } from "@fluentui/react";
 import * as Comlink from "comlink";
 import { OutputItem } from "hedgehog-lab/core/output/output-item";
-import { executeOutput } from "hedgehog-lab/core/runtime";
 import { tutorials } from "hedgehog-lab/lab/tutorials";
 import * as React from "react";
-import CompilerWorker from "./workers/compiler.worker";
-import { CompilerInstance } from "./workers/compilerInstance";
+import { ICompilationResult } from "./workers/compilationResult";
+import { ExecutionSandbox } from "./workers/executionSandbox";
 import type { CodeEditor } from "./CodeEditor";
 import { JSErrorView } from "./components/JSErrorView";
 import { OutputList } from "./components/Output";
 import Scss from "./LabPrime.scss";
 import { AppThemeContext } from "./react/context";
+import CompilerWorker from "./workers/compiler.worker";
+import { CompilerInstance } from "./workers/compilerInstance";
+import ExecutorWorker from "./workers/executor.worker";
 
 const editorPreset = `// Let's get started!
 print("Hello, world!");
@@ -31,6 +33,8 @@ export const LabPrimeRoot: React.FC = () => {
     const [outputList, setOutputList] = React.useState<OutputItem[] | undefined>();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [executionError, setExecutionError] = React.useState<any>();
+    const [executionState, setExecutionState] = React.useState<"idle" | "compiling" | "executing">("idle");
+    const isIdle = executionState === "idle";
     const lastEditorContent = React.useMemo(() => localStorage.getItem(LOCAL_STORAGE_LAST_EDITOR_CONTENT_KEY) || editorPreset, []);
     const editorStartingEdgeRef = React.useRef<HTMLDivElement>(null);
     const outputStartingEdgeRef = React.useRef<HTMLDivElement>(null);
@@ -43,27 +47,53 @@ export const LabPrimeRoot: React.FC = () => {
     }
     async function onExecuteButtonClick() {
         if (!codeEditorRef.current) return;
-        saveEditorContent();
-        const content = codeEditorRef.current.editorState.sliceDoc();
-        let worker: CompilerWorker | undefined;
-        let compiler: Comlink.Remote<CompilerInstance> | undefined;
-        try {
-            worker = new CompilerWorker();
-            worker.postMessage("test");
-            compiler = Comlink.wrap<CompilerInstance>(worker);
-            const compiled = await compiler.compile(content);
-            const result = executeOutput(compiled.compiledCode);
-            setOutputList(result);
-            setExecutionError(undefined);
-        } catch (err) {
-            setExecutionError(err);
-        } finally {
-            compiler?.[Comlink.releaseProxy]();
-            worker?.terminate();
-        }
+        if (!isIdle) return;
         window.setTimeout(() => {
             outputStartingEdgeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 50);
+        saveEditorContent();
+        const content = codeEditorRef.current.editorState.sliceDoc();
+        const disposal: Array<() => void> = [];
+        const dispose = () => {
+            let d: (() => void) | undefined;
+            // eslint-disable-next-line no-cond-assign
+            while (d = disposal.pop()) {
+                try {
+                    d();
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.error("Error when disposing.", err);
+                }
+            }
+        };
+        try {
+            setExecutionState("compiling");
+            let compiled: ICompilationResult | undefined;
+            {
+                const worker = new CompilerWorker();
+                disposal.push(() => worker.terminate());
+                const compiler = Comlink.wrap<CompilerInstance>(worker);
+                disposal.push(() => compiler[Comlink.releaseProxy]());
+                compiled = await compiler.compile(content);
+                dispose();
+            }
+            setExecutionState("executing");
+            {
+                const worker = new ExecutorWorker();
+                disposal.push(() => worker.terminate());
+                const executor = Comlink.wrap<ExecutionSandbox>(worker);
+                disposal.push(() => executor[Comlink.releaseProxy]());
+                const result = await executor.execute(compiled);
+                dispose();
+                setOutputList(result);
+                setExecutionError(undefined);
+            }
+        } catch (err) {
+            setExecutionError(err);
+        } finally {
+            dispose();
+            setExecutionState("idle");
+        }
     }
     // Save editor content as draft when unmounting the component.
     React.useEffect(() => {
@@ -78,6 +108,7 @@ export const LabPrimeRoot: React.FC = () => {
             text: "Compile & Run",
             iconProps: { iconName: "Play" },
             onClick: () => { onExecuteButtonClick(); },
+            disabled: !isIdle,
         },
         {
             key: "D1",
@@ -176,7 +207,14 @@ export const LabPrimeRoot: React.FC = () => {
                 ],
             },
         },
-    ], [theme]);
+    ], [theme, isIdle]);
+    const executionProgressDescription = (() => {
+        switch (executionState) {
+            case "compiling": return "Compiling…";
+            case "executing": return "Executing…";
+            default: return executionState;
+        }
+    })();
     return (
         <div>
             <div ref={editorStartingEdgeRef} />
@@ -192,9 +230,10 @@ export const LabPrimeRoot: React.FC = () => {
                 <LazyCodeEditor ref={codeEditorRef} initialContent={lastEditorContent} />
             </React.Suspense>
             <div ref={outputStartingEdgeRef} />
-            <PrimaryButton onClick={onExecuteButtonClick}>Compile &amp; run</PrimaryButton>
+            <PrimaryButton onClick={onExecuteButtonClick} disabled={!isIdle}>Compile &amp; run</PrimaryButton>
             <div className={Scss.outputContainer}>
                 {executionError !== undefined && <JSErrorView className={Scss.outputErrorRoot} headerClassName={Scss.outputErrorHeader} error={executionError} />}
+                {isIdle || <ProgressIndicator label="Working" description={executionProgressDescription} />}
                 <OutputList items={outputList || []} />
             </div>
         </div>

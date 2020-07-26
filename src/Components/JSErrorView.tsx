@@ -17,7 +17,7 @@ export const JSErrorView: React.FC<IJSErrorView> = (props) => {
     if (error instanceof Error) {
         return (
             <div className={className} style={style}>
-                <div className={headerClassName} style={headerStyle}>Error [${error.name}]: {error.message}</div>
+                <div className={headerClassName} style={headerStyle}>Error [{error.name}]: {error.message}</div>
                 <div>{error.stack || "No stack trace information."}</div>
             </div>
         );

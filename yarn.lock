@@ -9966,6 +9966,13 @@ tar@^6.0.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
+tasklike-promise-library@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/tasklike-promise-library/-/tasklike-promise-library-0.0.13.tgz#f57a8476eccdc63c8cdd509217073b2275b9a1ff"
+  integrity sha512-tLvAEr1JcEpyj7kQvcTRUHKYslYp0or9eJm5LyDwmP8RT3ZcKLrplcOtglyF776/PKlz8zBxBqAuycGpJH6vOA==
+  dependencies:
+    tslib "^1.11.1"
+
 terser-webpack-plugin@^3.0.2, terser-webpack-plugin@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-3.0.7.tgz#db23b946dcca8954da3ebda3675360bceebdc78e"
@@ -10239,7 +10246,7 @@ tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@^1.10.0, tslib@^1.8.1, tslib@^1.9.0:
+tslib@^1.10.0, tslib@^1.11.1, tslib@^1.8.1, tslib@^1.9.0:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.13.0.tgz#c881e13cc7015894ed914862d276436fa9a47043"
   integrity sha512-i/6DQjL8Xf3be4K/E6Wgpekn5Qasl1usyw++dAA35Ue5orEn65VIxOA+YvNNl9HV3qv70T7CNwjODHZrLwvd1Q==

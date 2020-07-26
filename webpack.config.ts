@@ -181,7 +181,7 @@ export default function config(env: unknown, argv: Record<string, string>): webp
         output: {
             path: outputPath,
             filename: "[name].js",
-            chunkFilename: "[id].[chunkhash].chunk.js",
+            chunkFilename: "[id].[fullhash].chunk.js",
         },
     };
 }

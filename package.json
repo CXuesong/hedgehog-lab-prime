@@ -79,6 +79,7 @@
     "react-markdown": "^4.3.1",
     "react-mathjax": "^1.0.1",
     "react-plotly.js": "^2.4.0",
+    "tasklike-promise-library": "^0.0.13",
     "tslib": "^2.0.0"
   }
 }

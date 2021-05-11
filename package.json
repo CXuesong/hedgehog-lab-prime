@@ -70,7 +70,7 @@
     "classnames": "^2.2.6",
     "comlink": "^4.3.0",
     "hedgehog-lab": "https://github.com/lidangzzz/hedgehog-lab.git#master",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mathjs": "^7.1.0",
     "plotly.js": "^1.54.7",
     "prop-types": "^15.7.2",
